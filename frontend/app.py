@@ -210,33 +210,6 @@ textarea, .stTextArea textarea {
 
 .score-emoji { font-size: 3rem; text-align: center; padding: 0.5rem; }
 </style>
-
-<div id="emojiLayer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;overflow:hidden;"></div>
-<script>
-var emojis=['🍕','🍜','🍣','🥗','🍔','🍷','🥘','🍰','🌮','🥩','🍱','🧆','🥐','🍝','🧁','🦞','🍤'];
-var layer=document.getElementById('emojiLayer');
-function makeEmoji(){
-    var el=document.createElement('div');
-    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    el.style.cssText='position:absolute;font-size:'+(35+Math.random()*45)+'px;left:'+(Math.random()*100)+'vw;bottom:-80px;opacity:0;';
-    layer.appendChild(el);
-    var dur=7000+Math.random()*8000, start=null;
-    function anim(ts){
-        if(!start) start=ts;
-        var p=(ts-start)/dur;
-        if(p>=1){el.remove();return;}
-        var y=window.innerHeight*(1-p);
-        var rot=(Math.random()-0.5)*360*p;
-        var op=p<0.1?p*10:p>0.85?(1-p)/0.15:1;
-        el.style.transform='translateY('+(-window.innerHeight*p*1.1)+'px) rotate('+rot+'deg)';
-        el.style.opacity=op;
-        requestAnimationFrame(anim);
-    }
-    requestAnimationFrame(anim);
-}
-setInterval(makeEmoji,500);
-for(var i=0;i<12;i++) setTimeout(makeEmoji,i*150);
-</script>
 """, unsafe_allow_html=True)
 
 BACKEND    = "http://127.0.0.1:8000"
@@ -282,7 +255,7 @@ def dlayout(**kw):
 st.markdown("""
 <div class="hero-wrap">
   <div class="hero-title">Restaurant <span class="accent">Review</span> Analyzer</div>
-  <div class="hero-sub">AI · Sentiment · Category Intelligence · Insights</div>
+  <div class="hero-sub">Sentiment · Category Intelligence · Insights</div>
 </div>""", unsafe_allow_html=True)
 
 tab1, tab2 = st.tabs(["  🔍  Analyze a Review  ", "  📊  Dataset Dashboard  "])
@@ -334,7 +307,7 @@ with tab1:
                         wc = len(text.split())
                         st.markdown(f'<div class="card"><div class="card-label">Review Length</div><div class="card-value">{wc} words</div></div>', unsafe_allow_html=True)
 
-                    st.markdown(f'<div class="card" style="border-left:4px solid #e8a030;"><div class="card-label">✨ AI Summary</div><div class="card-value" style="font-style:italic;color:#ffcc80;">"{summ}"</div></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="card" style="border-left:4px solid #e8a030;"><div class="card-label">📝 Summary</div><div class="card-value" style="font-style:italic;color:#ffcc80;">"{summ}"</div></div>', unsafe_allow_html=True)
 
                     st.markdown('<div class="sec-title">Category Breakdown</div>', unsafe_allow_html=True)
                     st.markdown(cat_html(cats), unsafe_allow_html=True)
@@ -355,7 +328,7 @@ with tab1:
                                 tickcolor="#ffffff",
                                 linecolor="rgba(255,255,255,0.2)",
                                 tickfont=dict(color="#ffffff", size=12))),
-                        **dlayout(height=280))
+                        **dlayout(height=320, margin=dict(t=45, b=45, l=45, r=45)))
                     st.plotly_chart(fig, use_container_width=True)
 
                 except requests.exceptions.ConnectionError:
