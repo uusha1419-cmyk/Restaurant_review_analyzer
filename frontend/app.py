@@ -290,6 +290,9 @@ with tab1:
             with st.spinner("Running AI analysis..."):
                 try:
                     res = requests.post(f"{BACKEND}/analyze_review", json={"review": text}, timeout=60)
+                    if res.status_code != 200:
+                        st.error("The review must not be empty or longer than 2000 characters.")
+                        st.stop()
                     d   = res.json()
                     sent, conf, summ, cats = d["sentiment"], d["confidence"], d["summary"], d["categories"]
 

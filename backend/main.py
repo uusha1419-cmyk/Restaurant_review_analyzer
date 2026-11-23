@@ -53,13 +53,13 @@ def split_sentences(text):
 def category_sentiments(text):
     sentences = split_sentences(text)
 
-    # Find which categories each sentence talks about
     matches = []
     for s in sentences:
         words = set(re.findall(r"[a-z]+", s.lower()))
         cats = {c for c, kw in CATEGORY_KEYWORDS.items() if kw & words}
-        if len(cats) > 1:
-            cats.discard("food")   # "food" is a generic word, so prefer the specific category
+        # Ignore "food" only when the bare word "food" is the only food keyword
+        if "food" in cats and len(cats) > 1 and (CATEGORY_KEYWORDS["food"] & words) <= {"food"}:
+            cats.discard("food")
         matches.append((s, cats))
 
     results = {}
@@ -69,7 +69,8 @@ def category_sentiments(text):
             results[cat] = "neutral"
             continue
         preds = sentiment_model(matched, truncation=True)
-        score = sum(1 if p["label"] == "POSITIVE" else -1 for p in preds)
+        # Count only confident predictions (70% or more)
+        score = sum(1 if p["label"] == "POSITIVE" else -1 for p in preds if p["score"] >= 0.70)
         results[cat] = "positive" if score > 0 else "negative" if score < 0 else "neutral"
     return results
 
@@ -88,7 +89,7 @@ def make_summary(sentiment, cats):
 
 def analyze(text):
     result = sentiment_model(text, truncation=True)[0]
-    sentiment = result["label"] if result["score"] >= 0.60 else "NEUTRAL"
+    sentiment = result["label"] if result["score"] >= 0.70 else "NEUTRAL"
     cats = category_sentiments(text)
     return {
         "review": text,
