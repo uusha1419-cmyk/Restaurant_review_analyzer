@@ -52,7 +52,9 @@ The overall model gives one label for the whole text. The category breakdown sho
 ```
 backend/    FastAPI app (main.py) and requirements
 frontend/   Streamlit app (app.py) and requirements
-screenshots/
+analyzer.png    Screenshot: analyze a review
+analyzer1.png   Screenshot: dashboard
+README.md
 ```
 
 ## 🚀 Run locally
